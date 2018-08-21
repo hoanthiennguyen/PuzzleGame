@@ -1,6 +1,8 @@
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -15,10 +17,28 @@ import javax.swing.JOptionPane;
  * @author USER
  */
 public class NewJFrame extends javax.swing.JFrame {
+    private class TimeCounter extends Thread
+    {
+        @Override
+        public void run() {
+            int second = 0;
+            while (!isWin) {                
+                second++;
+                lbTime.setText(second+"");
+                try {
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+    }
     int size = 3;
     int row,col;
-    
     GridLayout layout;
+    boolean isWin;
+    
     //Array of JButton
     Component[] arr;
     
@@ -26,16 +46,16 @@ public class NewJFrame extends javax.swing.JFrame {
     //if true, checkWin() shouldn't work
     boolean shuffling;
     final String[] ARROWS = {"left", "up", "right", "down"};
-    
+    TimeCounter time;
     public NewJFrame() {
         initComponents();
-        layout = (GridLayout) panel.getLayout();   
+        layout = (GridLayout) panel.getLayout();
         start();                
     }
     private void start()
     {
         panel.removeAll();
-        panel.setFocusable(true);//to get event key pressed
+        panel.requestFocusInWindow();//to get event key pressed
         //reset position of blank square
         col = size-1; row = size-1;
         
@@ -54,6 +74,10 @@ public class NewJFrame extends javax.swing.JFrame {
         arr = panel.getComponents();
         panel.updateUI();       
         shuffle();
+        
+        //start counting time
+        time = new TimeCounter();
+        time.start();
     }
     private void shuffle()
     {
@@ -107,9 +131,11 @@ public class NewJFrame extends javax.swing.JFrame {
             btn.setText(nextBtn.getText());
             nextBtn.setText(" ");
         }
-
-        if(checkWin() && !shuffling)
-            JOptionPane.showMessageDialog(this, "You won");
+        isWin = checkWin();
+        if(isWin && !shuffling){           
+            JOptionPane.showMessageDialog(this, "You won");            
+        }
+            
     }
 
     /**
@@ -122,11 +148,15 @@ public class NewJFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         panel = new javax.swing.JPanel();
-        btnStart = new javax.swing.JButton();
-        cbSize = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        cbSize = new javax.swing.JComboBox<>();
+        btnStart = new javax.swing.JButton();
+        lbTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(500, 500));
+        setPreferredSize(new java.awt.Dimension(410, 400));
 
         panel.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -135,12 +165,10 @@ public class NewJFrame extends javax.swing.JFrame {
         });
         panel.setLayout(new java.awt.GridLayout(1, 0));
 
-        btnStart.setText("Start");
-        btnStart.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStartActionPerformed(evt);
-            }
-        });
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+
+        jLabel1.setText("Size");
+        jPanel1.add(jLabel1);
 
         cbSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3x3", "4x4" }));
         cbSize.addActionListener(new java.awt.event.ActionListener() {
@@ -148,37 +176,37 @@ public class NewJFrame extends javax.swing.JFrame {
                 cbSizeActionPerformed(evt);
             }
         });
+        jPanel1.add(cbSize);
 
-        jLabel1.setText("Size");
+        btnStart.setText("Start");
+        btnStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStartActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnStart);
+
+        lbTime.setText("0");
+        jPanel1.add(lbTime);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(cbSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnStart)
-                .addGap(97, 97, 97))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
-                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(62, 62, 62))
+                .addGap(66, 66, 66)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
+                .addGap(70, 70, 70))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnStart)
-                    .addComponent(cbSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(40, 40, 40))
+                .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -196,7 +224,6 @@ public class NewJFrame extends javax.swing.JFrame {
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
         start();
-        
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void panelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_panelKeyPressed
@@ -247,6 +274,8 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnStart;
     private javax.swing.JComboBox<String> cbSize;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lbTime;
     private javax.swing.JPanel panel;
     // End of variables declaration//GEN-END:variables
 }
