@@ -1,9 +1,6 @@
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -18,25 +15,6 @@ import javax.swing.JOptionPane;
  * @author USER
  */
 public class NewJFrame extends javax.swing.JFrame {
-    private class MyDispatcher implements KeyEventDispatcher {
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-                int code = e.getKeyCode();
-                if(code == 37)
-                    move("left");
-                else if(code == 38)
-                    move("up");
-                else if (code == 39)
-                    move("right");
-                else if(code == 40)
-                    move("down");
-            }
-            return false;
-        }
-        
-        
-    }
     int size = 3;
     int row,col;
     
@@ -45,13 +23,13 @@ public class NewJFrame extends javax.swing.JFrame {
     Component[] arr;
     
     boolean shuffling;
-    final String[] ARROWS = {"left", "right", "up", "down"};
+    final String[] ARROWS = {"left", "up", "right", "down"};
+    
     public NewJFrame() {
-        initComponents();
-        layout = (GridLayout) panel.getLayout();        
+        initComponents();            
         start();
-        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new MyDispatcher());
+        layout = (GridLayout) panel.getLayout();    
+        panel.setFocusable(true);//to get event key pressed
     }
     private void start()
     {
@@ -64,8 +42,7 @@ public class NewJFrame extends javax.swing.JFrame {
         layout.setColumns(size);
         layout.setRows(0);        
         
-        //add components
-        
+        //add components        
         for(int i = 1; i < size*size; i++)
         {
             panel.add(new JButton(i+""));
@@ -152,6 +129,11 @@ public class NewJFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        panel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                panelKeyPressed(evt);
+            }
+        });
         panel.setLayout(new java.awt.GridLayout(1, 0));
 
         btnStart.setText("Start");
@@ -217,6 +199,13 @@ public class NewJFrame extends javax.swing.JFrame {
         start();
         
     }//GEN-LAST:event_btnStartActionPerformed
+
+    private void panelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_panelKeyPressed
+        // TODO add your handling code here:
+        int cc = evt.getKeyCode();
+        if(cc >= 37 && cc <= 40)
+            move(ARROWS[cc-37]);
+    }//GEN-LAST:event_panelKeyPressed
 
     /**
      * @param args the command line arguments
