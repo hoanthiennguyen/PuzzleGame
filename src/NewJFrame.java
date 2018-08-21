@@ -22,23 +22,24 @@ public class NewJFrame extends javax.swing.JFrame {
     //Array of JButton
     Component[] arr;
     
+    //flag variable indicates whether programe is shuffling
+    //if true, checkWin() shouldn't work
     boolean shuffling;
     final String[] ARROWS = {"left", "up", "right", "down"};
     
     public NewJFrame() {
-        initComponents();            
-        start();
-        layout = (GridLayout) panel.getLayout();    
-        panel.setFocusable(true);//to get event key pressed
+        initComponents();
+        layout = (GridLayout) panel.getLayout();   
+        start();                
     }
     private void start()
     {
         panel.removeAll();
-        
+        panel.setFocusable(true);//to get event key pressed
         //reset position of blank square
         col = size-1; row = size-1;
         
-        //set up layout
+        //set up layout 
         layout.setColumns(size);
         layout.setRows(0);        
         
@@ -77,10 +78,8 @@ public class NewJFrame extends javax.swing.JFrame {
                 return false;                 
             }
                
-        }
-        
-        return true;
-        
+        }        
+        return true;        
     }
     //move blank square
     private void move(String arrow)
