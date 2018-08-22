@@ -19,12 +19,14 @@ import javax.swing.JOptionPane;
 public class NewJFrame extends javax.swing.JFrame {
     private class TimeCounter extends Thread
     {
+        int count = 0;       
         @Override
         public void run() {
-            int second = 0;
-            while (!isWin) {                
-                second++;
-                lbTime.setText(second+"");
+            
+            while (true) {                
+                count++;
+                if(!isWin)
+                    lbTime.setText(count+"");
                 try {
                     sleep(1000);
                 } catch (InterruptedException ex) {
@@ -38,7 +40,6 @@ public class NewJFrame extends javax.swing.JFrame {
     int row,col;
     GridLayout layout;
     boolean isWin;
-    
     //Array of JButton
     Component[] arr;
     
@@ -50,7 +51,10 @@ public class NewJFrame extends javax.swing.JFrame {
     public NewJFrame() {
         initComponents();
         layout = (GridLayout) panel.getLayout();
-        start();                
+        start();
+        isWin = false;
+        time = new TimeCounter();
+        time.start();
     }
     private void start()
     {
@@ -74,10 +78,6 @@ public class NewJFrame extends javax.swing.JFrame {
         arr = panel.getComponents();
         panel.updateUI();       
         shuffle();
-        
-        //start counting time
-        time = new TimeCounter();
-        time.start();
     }
     private void shuffle()
     {
@@ -223,6 +223,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
+        time.count = 0;
         start();
     }//GEN-LAST:event_btnStartActionPerformed
 
