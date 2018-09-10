@@ -1,9 +1,14 @@
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
+import javax.swing.Icon;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /*
@@ -42,7 +47,8 @@ public class NewJFrame extends javax.swing.JFrame {
     boolean isWin;
     //Array of JButton
     Component[] arr;
-    
+    JFileChooser fc = new JFileChooser();
+    File open;
     //flag variable indicates whether programe is shuffling
     //if true, checkWin() shouldn't work
     boolean shuffling;
@@ -65,14 +71,20 @@ public class NewJFrame extends javax.swing.JFrame {
         
         //set up layout 
         layout.setColumns(size);
-        layout.setRows(0);        
+        layout.setRows(0);
+        
+        ArrayList<Icon> icons = Util.getImages(80,open);
         
         //add components        
         for(int i = 1; i < size*size; i++)
         {
-            panel.add(new JButton(i+""));
+            JLabel label = new JLabel(i+"",icons.get(i-1),0);
+            label.setForeground(label.getBackground());
+            label.setFont(new Font("Arial", 0, 0));
+
+            panel.add(label);
         }
-        panel.add(new JButton(" "));
+        panel.add(new JLabel());
         
         //update UI and shuffle
         arr = panel.getComponents();
@@ -96,7 +108,7 @@ public class NewJFrame extends javax.swing.JFrame {
         for(int i =0; i < arr.length-1; i++)
         {
             //check if each button text is equal its postion + 1
-            JButton btn = (JButton) arr[i];            
+            JLabel btn = (JLabel) arr[i];            
             if(!btn.getText().equals( (i+1) + ""))
             {                
                 return false;                 
@@ -126,9 +138,11 @@ public class NewJFrame extends javax.swing.JFrame {
                     break;
             }
             int nextPos = row*size + col;
-            JButton nextBtn = (JButton) arr[nextPos];
-            JButton btn = (JButton) arr[pos];
+            JLabel nextBtn = (JLabel) arr[nextPos];
+            JLabel btn = (JLabel) arr[pos];
+            btn.setIcon(nextBtn.getIcon());
             btn.setText(nextBtn.getText());
+            nextBtn.setIcon(null);
             nextBtn.setText(" ");
         }
         isWin = checkWin();
@@ -149,6 +163,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         panel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
+        btnBrowse = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         cbSize = new javax.swing.JComboBox<>();
         btnStart = new javax.swing.JButton();
@@ -166,6 +181,14 @@ public class NewJFrame extends javax.swing.JFrame {
         panel.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+
+        btnBrowse.setText("Browse");
+        btnBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBrowseActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnBrowse);
 
         jLabel1.setText("Size");
         jPanel1.add(jLabel1);
@@ -197,8 +220,8 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGap(66, 66, 66)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
-                .addGap(70, 70, 70))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE))
+                .addGap(87, 87, 87))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,6 +256,13 @@ public class NewJFrame extends javax.swing.JFrame {
         if(cc >= 37 && cc <= 40)
             move(ARROWS[cc-37]);
     }//GEN-LAST:event_panelKeyPressed
+
+    private void btnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseActionPerformed
+        // TODO add your handling code here:
+        if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                open = fc.getSelectedFile();
+            }
+    }//GEN-LAST:event_btnBrowseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -272,6 +302,7 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBrowse;
     private javax.swing.JButton btnStart;
     private javax.swing.JComboBox<String> cbSize;
     private javax.swing.JLabel jLabel1;
