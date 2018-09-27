@@ -26,7 +26,7 @@ public class Game extends javax.swing.JFrame {
         gameboard = new Gameboard(size, imageSrc);        
         
         this.add(gameboard, BorderLayout.CENTER);
-        cbSize.setFocusable(false);
+        this.setFocusable(true);
     }
 
     /**
@@ -121,7 +121,7 @@ public class Game extends javax.swing.JFrame {
             size = 3;
         else
             size = 4;
-        gameboard.setGameSize(size);        
+        gameboard.setGameSize(size);
         
     }//GEN-LAST:event_cbSizeActionPerformed
 
@@ -137,6 +137,7 @@ public class Game extends javax.swing.JFrame {
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
         gameboard.start();
+        this.requestFocus();       
     }//GEN-LAST:event_btnStartActionPerformed
 
     /**

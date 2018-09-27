@@ -35,7 +35,8 @@ public class Gameboard extends JPanel{
     public void start()
     {
         reset();
-        ((GridLayout)this.getLayout()).setColumns(size);
+        GridLayout gridLayout = (GridLayout)this.getLayout();
+        gridLayout.setColumns(size);
         addComponents();
         shuffle();
     }
@@ -110,15 +111,14 @@ public class Gameboard extends JPanel{
         toBeEmptyLabel.setText(" ");
     }
     private boolean checkWin() {
-        for (int i = 0; i < labels.length - 1; i++) {
-            //check if each button text is equal its postion + 1
-            JLabel btn = labels[i];
-            if (!btn.getText().equals((i + 1) + "")) {
+        for (int i = 0; i < size*size -1; i++) {
+            //check if each button text is equal its postion
+            JLabel label = labels[i];
+            if (!label.getText().equals(i + "")) {
                 return false;
             }
-            
-
         }
+        
         return true;
     }
     private void addComponents()
@@ -127,7 +127,7 @@ public class Gameboard extends JPanel{
         JLabel label = null;
         for(int i = 0; i < size*size; i++)
         {
-            label = new JLabel((i+1)+"" ,icons.get(i),0);
+            label = new JLabel(i + "" ,icons.get(i),0);
             label.setForeground(label.getBackground());
             label.setFont(new Font("Arial", 0, 0));
 
@@ -135,7 +135,7 @@ public class Gameboard extends JPanel{
             labels[i] = label;
         }
         label.setIcon(null);
-        
+        label.setText(" ");
     }
 
 }
