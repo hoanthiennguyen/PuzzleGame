@@ -45,5 +45,15 @@ public class Util {
         }
         return result;
     }
+    public static Icon getIcon(File f, int size)
+    {
+        try {
+            BufferedImage img = ImageIO.read(f);
+            return new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH));
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
 }

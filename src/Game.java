@@ -1,6 +1,12 @@
 
 import java.awt.BorderLayout;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 
 /*
@@ -17,18 +23,36 @@ public class Game extends javax.swing.JFrame {
     Gameboard gameboard;
     File imageSrc;
     int size;
+    String currentPath;
     public Game() {
         initComponents();
-        size = 3;
-        this.setSize(400,500);
-        imageSrc = new File("./img/thien.jpg");
-        
-        gameboard = new Gameboard(size, imageSrc);        
-        
+        initParam();
         this.add(gameboard, BorderLayout.CENTER);
         this.setFocusable(true);
     }
-
+    private void initParam()
+    {
+        size = 3;
+        this.setSize(400,500);
+        imageSrc = new File("data");
+        lbImage.setIcon(Util.getIcon(imageSrc, 50));
+        gameboard = new Gameboard(size, imageSrc);        
+        currentPath = getCurrentDir();
+    }
+    private String getCurrentDir()
+    {
+        String result = null;
+        FileReader reader;
+        try {
+            reader = new FileReader("dir");
+            BufferedReader br = new BufferedReader(reader);
+            result = br.readLine();
+            
+        } catch (Exception ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,8 +67,14 @@ public class Game extends javax.swing.JFrame {
         btnStart = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnImage = new javax.swing.JButton();
+        lbImage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
@@ -67,7 +97,7 @@ public class Game extends javax.swing.JFrame {
 
         jLabel1.setText("Size");
 
-        btnImage.setText("Image");
+        btnImage.setText("Browse");
         btnImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImageActionPerformed(evt);
@@ -79,15 +109,17 @@ public class Game extends javax.swing.JFrame {
         pnMenuLayout.setHorizontalGroup(
             pnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnMenuLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jLabel1)
+                .addGap(22, 22, 22)
+                .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
                 .addComponent(btnImage)
-                .addGap(55, 55, 55)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel1)
+                .addGap(8, 8, 8)
+                .addComponent(cbSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
                 .addComponent(btnStart)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
         pnMenuLayout.setVerticalGroup(
             pnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,7 +130,11 @@ public class Game extends javax.swing.JFrame {
                     .addComponent(btnStart)
                     .addComponent(jLabel1)
                     .addComponent(btnImage))
-                .addGap(37, 37, 37))
+                .addGap(40, 40, 40))
+            .addGroup(pnMenuLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnMenu, java.awt.BorderLayout.PAGE_END);
@@ -127,11 +163,15 @@ public class Game extends javax.swing.JFrame {
 
     private void btnImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImageActionPerformed
         // TODO add your handling code here:
-        JFileChooser fc = new JFileChooser();
+        JFileChooser fc = new JFileChooser(currentPath);
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 imageSrc = fc.getSelectedFile();
-            }
-        gameboard.setImageSrc(imageSrc);
+                gameboard.setImageSrc(imageSrc);
+                lbImage.setIcon(Util.getIcon(imageSrc, 50));
+                currentPath = imageSrc.getParent();
+                
+            }      
+        
     }//GEN-LAST:event_btnImageActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
@@ -139,6 +179,19 @@ public class Game extends javax.swing.JFrame {
         gameboard.start();
         this.requestFocus();       
     }//GEN-LAST:event_btnStartActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        if(currentPath != null)
+        {
+            try (PrintWriter pw = new PrintWriter("dir")) {
+                pw.write(currentPath);
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -180,6 +233,7 @@ public class Game extends javax.swing.JFrame {
     private javax.swing.JButton btnStart;
     private javax.swing.JComboBox<String> cbSize;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lbImage;
     private javax.swing.JPanel pnMenu;
     // End of variables declaration//GEN-END:variables
 }
