@@ -1,12 +1,6 @@
 
 import java.awt.BorderLayout;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 
 /*
@@ -20,6 +14,7 @@ import javax.swing.JFileChooser;
  * @author USER
  */
 public class Game extends javax.swing.JFrame {
+    final int HINT_IMG_SIZE = 50;
     Gameboard gameboard;
     File imageSrc;
     int size;
@@ -35,23 +30,9 @@ public class Game extends javax.swing.JFrame {
         size = 3;
         this.setSize(400,500);
         imageSrc = new File("data");
-        lbImage.setIcon(Util.getIcon(imageSrc, 50));
+        lbImage.setIcon(ImageUtil.getIcon(imageSrc, HINT_IMG_SIZE));
         gameboard = new Gameboard(size, imageSrc);        
-        currentPath = getCurrentDir();
-    }
-    private String getCurrentDir()
-    {
-        String result = null;
-        FileReader reader;
-        try {
-            reader = new FileReader("dir");
-            BufferedReader br = new BufferedReader(reader);
-            result = br.readLine();
-            
-        } catch (Exception ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return result;
+        currentPath = FileUtil.getCurrentDirectory();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -167,7 +148,7 @@ public class Game extends javax.swing.JFrame {
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 imageSrc = fc.getSelectedFile();
                 gameboard.setImageSrc(imageSrc);
-                lbImage.setIcon(Util.getIcon(imageSrc, 50));
+                lbImage.setIcon(ImageUtil.getIcon(imageSrc, HINT_IMG_SIZE));
                 currentPath = imageSrc.getParent();
                 
             }      
@@ -182,15 +163,7 @@ public class Game extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        if(currentPath != null)
-        {
-            try (PrintWriter pw = new PrintWriter("dir")) {
-                pw.write(currentPath);
-                
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        FileUtil.writeCurrentDirectory(currentPath);
     }//GEN-LAST:event_formWindowClosing
 
     /**

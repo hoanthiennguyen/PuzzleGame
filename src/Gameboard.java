@@ -18,7 +18,7 @@ import javax.swing.JPanel;
  * @author USER
  */
 public class Gameboard extends JPanel{
-
+    final int GAME_BOARD_SIZE = 300;
     private int size;
     private int x, y;
     JLabel[] labels;
@@ -29,7 +29,7 @@ public class Gameboard extends JPanel{
         this.setLayout(new GridLayout(0, size));
         this.imageSrc = imageSrc;
         this.setVisible(true);
-        this.setSize(300, 300);
+        this.setSize(GAME_BOARD_SIZE, GAME_BOARD_SIZE);
         start();
     }
     public void start()
@@ -43,7 +43,6 @@ public class Gameboard extends JPanel{
     public void reset()
     {
         this.removeAll();
-        this.requestFocusInWindow();
         labels = new JLabel[size*size];
         x = size -1;
         y = size - 1;
@@ -60,12 +59,12 @@ public class Gameboard extends JPanel{
     public void shuffle()
     {
         //move the blank square around randomly 10 times
-        //its original position is top left (0,0)
+        //its original position is bottom right
         final String[] ARROWS = {"up","down","up","left","right","up","left"};
         isShuffling = true;
         for(int i = 0; i < 20; i++)
         {
-            int random = (int) (Math.random()*6);
+            int random = (int) (Math.random()*7);
             update(ARROWS[random]);
         }
         isShuffling = false;
@@ -123,7 +122,7 @@ public class Gameboard extends JPanel{
     }
     private void addComponents()
     {
-        ArrayList<Icon> icons = Util.getImages(size, imageSrc);
+        ArrayList<Icon> icons = ImageUtil.getImages(size, imageSrc);
         JLabel label = null;
         for(int i = 0; i < size*size; i++)
         {

@@ -19,8 +19,8 @@ import javax.swing.ImageIcon;
  *
  * @author USER
  */
-public class Util {
-
+public class ImageUtil {
+    
     public static ArrayList<Icon> getImages(int gameSzie, File open) {
         ArrayList<Icon> result = new ArrayList<>();
         int iconSize = 300/gameSzie;
@@ -41,7 +41,7 @@ public class Util {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ImageUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -51,7 +51,7 @@ public class Util {
             BufferedImage img = ImageIO.read(f);
             return new ImageIcon(img.getScaledInstance(size, size, Image.SCALE_SMOOTH));
         } catch (IOException ex) {
-            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ImageUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
